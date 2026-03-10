@@ -1,0 +1,16 @@
+[project]
+name = "autoresearch-local"
+version = "0.1.0"
+description = "Local M3 Max adaptation of Karpathy's autoresearch"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.1",
+    "numpy>=1.24",
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+analysis = [
+    "matplotlib>=3.7",
+    "pandas>=2.0",
+]
