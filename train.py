@@ -25,7 +25,7 @@ from prepare import (
 )
 
 # ---- Hyperparameters ----
-DEPTH = 4
+DEPTH = 3
 MODEL_DIM = 384
 N_HEADS = 6
 HEAD_DIM = MODEL_DIM // N_HEADS  # 64
