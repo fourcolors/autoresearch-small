@@ -8,6 +8,7 @@ between experiments to explore architectural and hyperparameter changes.
 import os
 import sys
 import time
+import math
 import json
 import numpy as np
 import torch
@@ -228,10 +229,15 @@ def main():
     total_loss = 0.0
     start_time = time.time()
 
-    # Warmup + cosine schedule
-    def get_lr(step):
+    # Warmup + warmdown schedule (cosine decay in last 50% of time)
+    WARMDOWN_RATIO = 0.5
+    def get_lr(step, elapsed):
         if step < WARMUP_STEPS:
             return LEARNING_RATE * (step + 1) / WARMUP_STEPS
+        progress = elapsed / TIME_BUDGET
+        if progress > (1.0 - WARMDOWN_RATIO):
+            cooldown = (1.0 - progress) / WARMDOWN_RATIO
+            return LEARNING_RATE * cooldown
         return LEARNING_RATE
 
     print(f"Training for {TIME_BUDGET}s on {DEVICE}...")
@@ -245,7 +251,7 @@ def main():
             break
 
         # LR schedule
-        lr = get_lr(step)
+        lr = get_lr(step, elapsed)
         for param_group in optimizer.param_groups:
             param_group["lr"] = lr
 
