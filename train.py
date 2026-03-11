@@ -297,7 +297,7 @@ def main():
     ckpt_path = os.path.join(os.path.dirname(__file__), "model.pt")
     best_bpb = float("inf")
     if os.path.exists(ckpt_path):
-        prev_ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        prev_ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
         best_bpb = prev_ckpt.get("val_bpb", float("inf"))
         print(f"previous_best_bpb: {best_bpb:.6f}")
 
