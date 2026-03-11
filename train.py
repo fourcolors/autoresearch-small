@@ -293,6 +293,52 @@ def main():
     print(f"total_steps: {step}")
     print(f"model_params: {n_params}")
 
+    # Save checkpoint
+    ckpt_path = os.path.join(os.path.dirname(__file__), "model.pt")
+    torch.save({
+        "model_state_dict": model.state_dict(),
+        "val_bpb": val_bpb,
+        "step": step,
+        "config": {
+            "vocab_size": tokenizer.vocab_size,
+            "dim": MODEL_DIM,
+            "depth": DEPTH,
+            "n_heads": N_HEADS,
+            "head_dim": HEAD_DIM,
+            "mlp_ratio": MLP_RATIO,
+            "dropout": DROPOUT,
+        },
+    }, ckpt_path)
+    print(f"checkpoint_saved: {ckpt_path}")
+
+    # Generate a sample to see what the model learned
+    generate_sample(model, tokenizer, DEVICE)
+
+
+@torch.no_grad()
+def generate_sample(model, tokenizer, device, prompt="ROMEO:", length=500, temperature=0.8):
+    """Generate text from the trained model by sampling one character at a time."""
+    model.eval()
+    tokens = tokenizer.encode(prompt)
+    x = torch.tensor(tokens, dtype=torch.long, device=device).unsqueeze(0)
+
+    for _ in range(length):
+        # Crop to max sequence length if needed
+        x_cond = x[:, -MAX_SEQ_LEN:]
+        logits = model(x_cond)
+        # Take logits at the last position and apply temperature
+        logits = logits[:, -1, :] / temperature
+        probs = F.softmax(logits, dim=-1)
+        next_token = torch.multinomial(probs, num_samples=1)
+        x = torch.cat([x, next_token], dim=1)
+
+    generated = tokenizer.decode(x[0].tolist())
+    print(f"\n{'='*60}")
+    print("GENERATED SAMPLE:")
+    print(f"{'='*60}")
+    print(generated)
+    print(f"{'='*60}")
+
 
 if __name__ == "__main__":
     main()
