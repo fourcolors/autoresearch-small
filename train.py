@@ -293,25 +293,34 @@ def main():
     print(f"total_steps: {step}")
     print(f"model_params: {n_params}")
 
-    # Save checkpoint
+    # Save checkpoint only if this is the best model so far
     ckpt_path = os.path.join(os.path.dirname(__file__), "model.pt")
-    torch.save({
-        "model_state_dict": model.state_dict(),
-        "val_bpb": val_bpb,
-        "step": step,
-        "config": {
-            "vocab_size": tokenizer.vocab_size,
-            "dim": MODEL_DIM,
-            "depth": DEPTH,
-            "n_heads": N_HEADS,
-            "head_dim": HEAD_DIM,
-            "mlp_ratio": MLP_RATIO,
-            "dropout": DROPOUT,
-        },
-    }, ckpt_path)
-    print(f"checkpoint_saved: {ckpt_path}")
+    best_bpb = float("inf")
+    if os.path.exists(ckpt_path):
+        prev_ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        best_bpb = prev_ckpt.get("val_bpb", float("inf"))
+        print(f"previous_best_bpb: {best_bpb:.6f}")
 
-    # Generate a sample to see what the model learned
+    if val_bpb < best_bpb:
+        torch.save({
+            "model_state_dict": model.state_dict(),
+            "val_bpb": val_bpb,
+            "step": step,
+            "config": {
+                "vocab_size": tokenizer.vocab_size,
+                "dim": MODEL_DIM,
+                "depth": DEPTH,
+                "n_heads": N_HEADS,
+                "head_dim": HEAD_DIM,
+                "mlp_ratio": MLP_RATIO,
+                "dropout": DROPOUT,
+            },
+        }, ckpt_path)
+        print(f"checkpoint_saved: {ckpt_path} (NEW BEST: {val_bpb:.6f})")
+    else:
+        print(f"checkpoint_kept: previous model is better ({best_bpb:.6f} vs {val_bpb:.6f})")
+
+    # Generate a sample from the current model to see what it learned
     generate_sample(model, tokenizer, DEVICE)
 
 
