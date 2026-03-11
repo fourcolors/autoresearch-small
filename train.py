@@ -114,17 +114,16 @@ class Attention(nn.Module):
 
 
 class MLP(nn.Module):
-    """SwiGLU feed-forward network."""
+    """ReLU² feed-forward network (from Karpathy's autoresearch)."""
 
     def __init__(self, dim, hidden_dim, dropout=0.0):
         super().__init__()
-        self.w1 = nn.Linear(dim, hidden_dim, bias=False)
-        self.w2 = nn.Linear(hidden_dim, dim, bias=False)
-        self.w3 = nn.Linear(dim, hidden_dim, bias=False)
+        self.fc1 = nn.Linear(dim, hidden_dim, bias=False)
+        self.fc2 = nn.Linear(hidden_dim, dim, bias=False)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        return self.dropout(self.w2(F.silu(self.w1(x)) * self.w3(x)))
+        return self.dropout(self.fc2(F.relu(self.fc1(x)).square()))
 
 
 class Block(nn.Module):
