@@ -1,0 +1,74 @@
+commit	val_bpb	vram_mb	status	description
+ff94eef	2.712210	16899.2	keep	baseline: 6-layer GPT, dim=384, 6 heads, SwiGLU, RoPE
+13af2d9	2.824190	16899.2	discard	cosine LR decay (EST_TOTAL_STEPS=200, MIN_LR=0.1x)
+9d72d65	2.653655	16899.2	keep	increase LR from 3e-4 to 1e-3
+63e26b1	2.581576	16899.2	keep	reduce warmup from 100 to 20 steps
+b788134	3.171771	35337.2	discard	increase batch size from 64 to 128
+e3dc024	2.308914	11771.2	keep	reduce depth from 6 to 4 layers
+faa7ab0	2.226986	9691.2	keep	reduce depth from 4 to 3 layers
+7113bc0	2.205154	7635.2	keep	reduce depth from 3 to 2 layers
+072e640	2.172023	5453.2	keep	reduce dim from 384→256, heads from 6→4
+49eac09	2.187561	5453.2	discard	increase LR from 1e-3 to 3e-3
+96ae76c	2.288480	4429.2	discard	remove dropout (0.1 -> 0.0)
+90bb516	2.177431	5381.2	discard	3 layers x 192 dim (deeper but narrower)
+eb02007	2.190965	6477.2	discard	increase MLP ratio from 4 to 8
+ee11aed	2.205697	5453.2	discard	reduce weight decay from 0.1 to 0.01
+82b000b	2.206565	5453.2	discard	LR=2e-3 (midpoint search)
+01db1c2	2.248477	4421.2	discard	replace SwiGLU with GELU MLP
+91aba17	2.183284	3278.2	discard	reduce batch size from 64 to 32
+55a82f5	2.176982	5454.8	discard	add learned positional embedding alongside RoPE
+f2f0fb3	2.205001	5453.2	discard	scaled init for residual projections
+bc44e3d	2.188060	5453.2	discard	increase warmup from 20 to 50 steps
+83a1897	2.212848	5453.2	discard	change beta2 from 0.95 to 0.99
+7abf8e0	2.193310	6547.2	discard	dim=320, 5 heads
+bcc45ac	2.195170	4173.1	discard	torch.compile
+5f467d1	nan	4446.2	crash	float16 half precision (NaN)
+b64898f	2.200804	4430.2	discard	torch.autocast mixed precision
+be372cd	2.220079	5453.2	discard	increase dropout from 0.1 to 0.2
+3e99f21	2.205009	5453.2	discard	label smoothing 0.1
+7461487	2.163717	4422.2	keep	ReLU² MLP (replace SwiGLU)
+c72f641	2.156599	4422.2	keep	increase MLP ratio from 4 to 6 (with ReLU²)
+036ad88	2.164446	4422.2	discard	MLP ratio 8 (too wide)
+aaa0ef4	2.184856	4422.2	discard	QK normalization
+2710072	2.193019	4422.2	discard	residual scaling 1/sqrt(depth)
+86c257f	2.176607	4422.2	discard	logit softcapping at 15.0
+70ac4a3	2.304832	4422.2	discard	RMS norm after embedding
+19ab062	2.174153	4422.2	discard	3 layers with ReLU² and MLP ratio 6
+17a09a7	2.226287	4422.2	discard	remove weight tying
+a13cddc	2.189263	4422.2	discard	5x higher LR for embedding
+0b77bb8	2.184106	4422.2	discard	zero_grad(set_to_none=True)
+914ef28	2.402908	4422.2	discard	parallel attn+MLP (PaLM-style)
+ca522e8	2.205644	4422.2	discard	8 heads with head_dim=32
+f0a6e2f	2.202113	4422.2	discard	dim=192 MLP ratio 8
+9df8e74	2.180723	4422.2	discard	embedding skip connection (x0 residual)
+8fc94c0	2.200001	4422.2	discard	emb init std=1.0
+4baa3e2	2.196812	4422.2	discard	batch size 48
+7c61659	2.180919	4422.2	discard	MLP ratio 5
+3ee320d	2.152562	4422.2	keep	add warmdown (linear decay last 50%)
+17d4e61	2.149517	4422.2	keep	increase LR from 1e-3 to 1.5e-3
+5a8adb7	2.135965	4422.2	keep	increase LR from 1.5e-3 to 2e-3
+267c8bd	2.157938	4422.2	discard	LR=3e-3 (too high)
+73fd9f2	2.161385	4422.2	discard	LR=2.5e-3
+d01bd1c	2.144112	4422.2	discard	beta1=0.8
+85c3ab6	2.147235	4422.2	discard	weight decay 0.2
+d62ba94	2.131329	4422.2	keep	reduce warmup from 20 to 10 steps
+39295dd	2.248313	4422.2	discard	no warmup (0 steps)
+320df41	2.125836	4422.2	keep	increase grad clip from 1.0 to 2.0
+2203a2d	2.170257	4422.2	discard	dropout 0.15
+26749d5	2.150615	4422.2	discard	warmdown ratio 0.3
+1171ee1	2.152834	4422.2	discard	MLP ratio 7
+2a39d8b	2.136593	4422.2	discard	no MLP dropout (attn only)
+baaafdc	2.170790	4422.2	discard	grad clip 3.0
+5c34c32	2.146663	4422.2	discard	decaying weight decay
+d5bdd24	2.160756	4422.2	discard	AdamW eps=1e-10
+52e8c37	2.170868	4422.2	discard	dropout after embedding
+2df3c0e	2.168029	4422.2	discard	warmdown ratio 0.7
+ad4bb71	2.152516	4422.2	discard	cosine warmdown
+e483aa5	2.177473	5454.2	discard	zero-init output projections (.out and .fc2)
+0b7471b	2.167957	3276.2	discard	gradient accumulation (2x microsteps, batch 32→effective 64)
+7b9a70e	2.148320	4422.2	discard	warmdown ratio 0.6 (longer gentler decay)
+c6a6c01	2.142169	5462.2	discard	EMA weight averaging (decay=0.99)
+a6bf1e5	2.162084	4422.2	discard	reduce warmup from 10 to 5 steps
+c990851	2.137526	4422.2	discard	sqrt warmdown decay (slower start, faster end)
+dbcad4a	2.161181	4422.2	discard	LR=1.8e-3 (midpoint 1.5e-3 and 2e-3)
+214e632	2.147986	4422.2	discard	warmdown ratio 0.4 (shorter steeper decay)
