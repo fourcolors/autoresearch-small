@@ -1,7 +1,7 @@
 [project]
-name = "autoresearch-local"
-version = "0.1.0"
-description = "Local M3 Max adaptation of Karpathy's autoresearch"
+name = "autoresearch-small"
+version = "1.0.0"
+description = "Autonomous ML experiment loop with Claude Code on Apple Silicon"
 requires-python = ">=3.11"
 dependencies = [
     "torch>=2.1",
